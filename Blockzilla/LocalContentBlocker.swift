@@ -6,18 +6,35 @@ import Foundation
 import WebKit
 
 class ContentBlockerHelper {
-    static func initialize() {
-        for list in Utils.getEnabledLists() {
-            let path = Bundle.main.path(forResource: list, ofType: "json")!
-            guard let jsonFileContent = try? String(contentsOfFile: path, encoding: String.Encoding.utf8) else { fatalError("check yo shit") }
-            WKContentRuleListStore.default().compileContentRuleList(forIdentifier: list, encodedContentRuleList: jsonFileContent) { (a, b) in
-                print(a, b)
+    static let shared = ContentBlockerHelper()
+
+    private var list: [WKContentRuleList]? = nil
+
+    static func compileItem(item: String, callback: () -> Void) {
+        let path = Bundle.main.path(forResource: item, ofType: "json")!
+        guard let jsonFileContent = try? String(contentsOfFile: path, encoding: String.Encoding.utf8) else { fatalError("check yo shit") }
+        
+    }
+
+    func getBlockLists(callback: ([WKContentRuleList]) -> Void) {
+        // If we already have a list, return it
+        let enabledList = Set(Utils.getEnabledLists())
+
+        if let currentList = list {
+            let identifiers = Set(currentList.map({ $0.identifier }))
+            if identifiers == enabledList {
+                callback(currentList); return
             }
+
+        }
+
+        WKContentRuleListStore.default().getAvailableContentRuleListIdentifiers { (identifiers) in
+            let identifiers = identifiers ?? []
         }
     }
 
-    static func reload() {
-
+    private func getExistingBlockListForIdentifiers(identifiers: [String], callback: ([WKContentRuleList]) -> Void) {
+        var identifiers
     }
 }
 
