@@ -91,6 +91,13 @@ class WebViewController: UIViewController, WebController {
             self.delegate?.webController(self, didUpdateEstimatedProgress: webView.estimatedProgress)
         }
 
+        for list in Utils.getEnabledLists() {
+            WKContentRuleListStore.default().lookUpContentRuleList(forIdentifier: list) { (list, error) in #imageLiteral(resourceName: "instructions-cog")
+                guard let list = list else { fatalError() }
+                self.browserView.configuration.userContentController.add(list)
+            }
+        }
+
     }
 }
 

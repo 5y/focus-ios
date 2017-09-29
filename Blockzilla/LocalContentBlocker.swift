@@ -3,6 +3,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import WebKit
+
+class ContentBlockerHelper {
+    static func initialize() {
+        for list in Utils.getEnabledLists() {
+            let path = Bundle.main.path(forResource: list, ofType: "json")!
+            guard let jsonFileContent = try? String(contentsOfFile: path, encoding: String.Encoding.utf8) else { fatalError("check yo shit") }
+            WKContentRuleListStore.default().compileContentRuleList(forIdentifier: list, encodedContentRuleList: jsonFileContent) { (a, b) in
+                print(a, b)
+            }
+        }
+    }
+
+    static func reload() {
+
+    }
+}
 
 protocol LocalContentBlockerDelegate: class {
     func localContentBlocker(_ localContentBlocker: LocalContentBlocker, didReceiveDataForMainDocumentURL url: URL?)

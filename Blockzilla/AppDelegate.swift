@@ -100,6 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         WebCacheUtils.reset()
 
         URLProtocol.registerClass(LocalContentBlocker.self)
+        ContentBlockerHelper().initialize()
 
         displaySplashAnimation()
         KeyboardHelper.defaultHelper.startObserving()
